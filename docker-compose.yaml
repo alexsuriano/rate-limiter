@@ -1,0 +1,15 @@
+services:
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+    networks:
+      - local-network
+
+volumes:
+  redis_data:
+    driver: local
+networks:
+  local-network:
