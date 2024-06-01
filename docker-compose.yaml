@@ -1,4 +1,16 @@
 services:
+
+  rate-limiter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    networks:
+      - local-network  
+
   redis:
     image: redis
     ports:
@@ -11,5 +23,6 @@ services:
 volumes:
   redis_data:
     driver: local
+
 networks:
   local-network:

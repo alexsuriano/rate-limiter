@@ -7,6 +7,7 @@ import (
 	"github.com/alexsuriano/rate-limiter/internal/infra/repository"
 	"github.com/alexsuriano/rate-limiter/internal/infra/web"
 	"github.com/alexsuriano/rate-limiter/internal/infra/web/webserver"
+	"github.com/alexsuriano/rate-limiter/internal/limiter"
 	"github.com/alexsuriano/rate-limiter/pkg/middlewares"
 	"github.com/go-chi/chi/middleware"
 )
@@ -16,20 +17,23 @@ func main() {
 
 	webserver := webserver.NewWebServer(cfg.WebServerPort)
 
-	cache := repository.NewRedisRepository(
+	cache, err := repository.NewRedisRepository(
 		cfg.RedisHost,
 		cfg.RedisPort,
 		cfg.RedisPassword,
 		cfg.RedisDB)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	middlewares := middlewares.NewMiddlewares(cache, middlewares.Options{
+	limit := limiter.NewLimiter(cache, limiter.Options{
 		LimitRequestIP:    cfg.LimitRequestIP,
 		LimitRequestToken: cfg.LimitRequestToken,
 		IpBlockingTime:    cfg.IpBlockingTime,
 		TokenBlockingTime: cfg.TokenBlockingTime,
 	})
 
-	webserver.AddMiddleware(middlewares.RateLimiter)
+	webserver.AddMiddleware(middlewares.RateLimiter(limit))
 	webserver.AddMiddleware(middleware.Logger)
 
 	webserver.AddHandler("/", web.LoremIpsum)
