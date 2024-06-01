@@ -9,7 +9,7 @@ import (
 )
 
 type RedisRepository struct {
-	client *redis.Client
+	Client *redis.Client
 }
 
 func NewRedisRepository(host, port, pass string, db int) (*RedisRepository, error) {
@@ -25,13 +25,13 @@ func NewRedisRepository(host, port, pass string, db int) (*RedisRepository, erro
 		return nil, err
 	}
 
-	return &RedisRepository{client: client}, nil
+	return &RedisRepository{Client: client}, nil
 }
 
 func (r *RedisRepository) Get(key string) (int, error) {
 	ctx := context.Background()
 
-	value, err := r.client.Get(ctx, key).Int()
+	value, err := r.Client.Get(ctx, key).Int()
 	if err == redis.Nil {
 		return 0, nil
 	} else if err != nil {
@@ -45,13 +45,13 @@ func (r *RedisRepository) Increment(key string, expire time.Duration) (int, erro
 
 	ctx := context.Background()
 
-	val, err := r.client.Incr(ctx, key).Result()
+	val, err := r.Client.Incr(ctx, key).Result()
 	if err != nil {
 		return 0, err
 	}
 
 	if val == 1 {
-		r.client.Expire(ctx, key, expire)
+		r.Client.Expire(ctx, key, expire)
 	}
 
 	return int(val), nil
