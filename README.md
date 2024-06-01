@@ -29,3 +29,29 @@ Crie uma “strategy” que permita trocar facilmente o Redis por outro mecanism
 - Limitação por Token: Se um token abc123 tiver um limite configurado de 10 requisições por segundo e enviar 11 requisições nesse intervalo, a décima primeira deve ser bloqueada.
 
 Nos dois casos acima, as próximas requisições poderão ser realizadas somente quando o tempo total de expiração ocorrer. Ex: Se o tempo de expiração é de 5 minutos, determinado IP poderá realizar novas requisições somente após os 5 minutos.
+
+## Como rodar a aplicação:
+- Clone o projeto
+- Vá até a raiz do projeto
+- Edite as variáveis de ambiente dentro do arquivo `.env` para configurar as opções do limiter:
+  - `LIMIT_REQUEST_IP` - Define o limite requests por IP dentro do tempo especificado.
+  - `LIMIT_REQUEST_TOKEN` - Define o limite requests por Token dentro do tempo especificado.
+  - `IP_BLOCKING_TIME` - Especifica o tempo para as requests de IP
+  - `TOKEN_BLOCKING_TIME` - Especifica o tempo para as requests de Token
+- Execute o seguinte comando para subir o servidor de teste com o rate-limiter configurado e o Redis:
+```
+docker compose up
+```
+- Execute uma chamada para o seguinte endereço `http://localhost:8080/` (ou conforme for configurado no arquivo `.env`) podendo ser adicionado ou não um header `API_KEY` com um token.
+- Para facilitar há exemplos das chamadas dentro da pasta `api` na raiz do projeto.
+
+## Como rodar os testes:
+- Vá até a raiz do projeto
+- Execute o seguinte comando para subir o serviço do Redis:
+```
+docker compose -f docker-compose-test.yaml up
+```
+- Execute o seguinte comando para executar os testes:
+```
+go test ./...
+```
