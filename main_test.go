@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/alexsuriano/rate-limiter/config"
 	"github.com/alexsuriano/rate-limiter/internal/infra/repository"
@@ -40,6 +41,7 @@ func TestTokenRequest(t *testing.T) {
 
 		webserver.AddHandler("/", web.LoremIpsum)
 		go webserver.Start()
+		time.Sleep(50 * time.Millisecond)
 
 		url := fmt.Sprintf("http://localhost:8181")
 		request, err := http.NewRequest("GET", url, nil)
@@ -76,6 +78,7 @@ func TestTokenRequest(t *testing.T) {
 
 		webserver.AddHandler("/", web.LoremIpsum)
 		go webserver.Start()
+		time.Sleep(50 * time.Millisecond)
 
 		url := fmt.Sprintf("http://localhost:8282")
 		request, err := http.NewRequest("GET", url, nil)
@@ -122,6 +125,7 @@ func TestIPRequest(t *testing.T) {
 
 		webserver.AddHandler("/", web.LoremIpsum)
 		go webserver.Start()
+		time.Sleep(50 * time.Millisecond)
 
 		url := fmt.Sprintf("http://localhost:8383")
 		request, err := http.NewRequest("GET", url, nil)
